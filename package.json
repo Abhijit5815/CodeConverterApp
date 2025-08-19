@@ -1,0 +1,26 @@
+{
+  "name": "code-convert-side-by-side",
+  "version": "1.0.0",
+  "description": "A web application for converting code between different programming languages with side-by-side comparison",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8080",
+    "start-node": "npx http-server -p 8080 -o",
+    "dev": "npx live-server --port=8080 --entry-file=index.html"
+  },
+  "keywords": [
+    "code-conversion",
+    "programming-languages",
+    "typescript",
+    "java",
+    "csharp",
+    "python",
+    "javascript"
+  ],
+  "author": "Abhijit Kasana",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "live-server": "^1.2.2"
+  }
+}

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Convert Side by Side</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Monaco Editor -->
+    <link rel="stylesheet" data-name="vs/editor/editor.main" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/editor/editor.main.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-code"></i> Code Convert</h1>
+                <p>Convert code between languages side by side</p>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="panels-container">
+                <!-- Source Panel -->
+                <div class="panel source-panel">
+                    <div class="panel-header">
+                        <div class="language-selector">
+                            <label for="source-language">Source Language:</label>
+                            <select id="source-language" class="language-select">
+                                <option value="typescript" selected>TypeScript</option>
+                                <option value="javascript">JavaScript</option>
+                                <option value="python">Python</option>
+                                <option value="java">Java</option>
+                                <option value="csharp">C#</option>
+                                <option value="cpp">C++</option>
+                                <option value="go">Go</option>
+                                <option value="rust">Rust</option>
+                            </select>
+                        </div>
+                        <button class="clear-btn" onclick="clearEditor('source')">
+                            <i class="fas fa-trash"></i> Clear
+                        </button>
+                    </div>
+                    <div class="editor-container">
+                        <div id="source-editor" class="monaco-editor"></div>
+                    </div>
+                </div>
+
+                <!-- Target Panel 1 -->
+                <div class="panel target-panel">
+                    <div class="panel-header">
+                        <div class="language-selector">
+                            <label for="target1-language">Target Language:</label>
+                            <select id="target1-language" class="language-select">
+                                <option value="java" selected>Java</option>
+                                <option value="typescript">TypeScript</option>
+                                <option value="javascript">JavaScript</option>
+                                <option value="python">Python</option>
+                                <option value="csharp">C#</option>
+                                <option value="cpp">C++</option>
+                                <option value="go">Go</option>
+                                <option value="rust">Rust</option>
+                            </select>
+                        </div>
+                        <button class="copy-btn" onclick="copyToClipboard('target1')">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                    <div class="editor-container">
+                        <div id="target1-editor" class="monaco-editor"></div>
+                    </div>
+                </div>
+
+                <!-- Target Panel 2 -->
+                <div class="panel target-panel">
+                    <div class="panel-header">
+                        <div class="language-selector">
+                            <label for="target2-language">Target Language:</label>
+                            <select id="target2-language" class="language-select">
+                                <option value="csharp" selected>C#</option>
+                                <option value="typescript">TypeScript</option>
+                                <option value="javascript">JavaScript</option>
+                                <option value="python">Python</option>
+                                <option value="java">Java</option>
+                                <option value="cpp">C++</option>
+                                <option value="go">Go</option>
+                                <option value="rust">Rust</option>
+                            </select>
+                        </div>
+                        <button class="copy-btn" onclick="copyToClipboard('target2')">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                    <div class="editor-container">
+                        <div id="target2-editor" class="monaco-editor"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-bar">
+                <button id="convert-btn" class="convert-button" onclick="convertCode()">
+                    <i class="fas fa-magic"></i> Convert Code
+                </button>
+                <div class="status-indicator">
+                    <span id="status-text">Ready to convert</span>
+                </div>
+                <button id="settings-btn" class="settings-button" onclick="toggleSettings()">
+                    <i class="fas fa-cog"></i> Settings
+                </button>
+            </div>
+
+            <!-- Ollama Settings Panel -->
+            <div id="settings-panel" class="settings-panel" style="display: none;">
+                <div class="settings-content">
+                    <h3><i class="fas fa-robot"></i> Ollama AI Settings</h3>
+                    
+                    <div class="setting-group">
+                        <label for="ollama-status">Ollama Status:</label>
+                        <span id="ollama-status" class="status-badge">Checking...</span>
+                        <button id="check-ollama-btn" onclick="checkOllamaStatus()">
+                            <i class="fas fa-refresh"></i> Check
+                        </button>
+                    </div>
+
+                    <div class="setting-group">
+                        <label for="ollama-model">AI Model:</label>
+                        <select id="ollama-model" onchange="updateOllamaModel()">
+                            <option value="codellama:7b">CodeLlama 7B (Recommended)</option>
+                            <option value="codellama:13b">CodeLlama 13B</option>
+                            <option value="codellama:34b">CodeLlama 34B</option>
+                            <option value="deepseek-coder:6.7b">DeepSeek Coder 6.7B</option>
+                            <option value="deepseek-coder:33b">DeepSeek Coder 33B</option>
+                            <option value="codegemma:7b">CodeGemma 7B</option>
+                            <option value="llama3:8b">Llama 3 8B</option>
+                            <option value="llama3:70b">Llama 3 70B</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-group">
+                        <label for="ollama-url">Ollama URL:</label>
+                        <input type="text" id="ollama-url" value="http://localhost:11434" onchange="updateOllamaUrl()">
+                    </div>
+
+                    <div class="setting-group">
+                        <label>Conversion Method:</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="conversion-method" value="ollama" checked> 
+                                AI-Powered (Ollama)
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="conversion-method" value="manual"> 
+                                Manual Rules (Fallback)
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="setting-group">
+                        <label>Learning System:</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="learning-mode" value="adaptive" checked> 
+                                Adaptive Learning (Recommended)
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="learning-mode" value="always-ai"> 
+                                Always Use AI
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="learning-mode" value="disabled"> 
+                                Learning Disabled
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="setting-group">
+                        <label for="confidence-threshold">Confidence Threshold:</label>
+                        <input type="range" id="confidence-threshold" min="0.5" max="0.95" step="0.05" value="0.8" onchange="updateConfidenceThreshold()">
+                        <span id="confidence-value">80%</span>
+                    </div>
+
+                    <div class="learning-stats-panel">
+                        <div id="learning-stats">
+                            <strong>Learning Progress:</strong><br>
+                            Total Conversions: 0<br>
+                            Manual Success Rate: 30.0%<br>
+                            AI Corrections: 0<br>
+                            Learned Patterns: 0
+                        </div>
+                        <button id="reset-learning-btn" onclick="resetLearningData()">
+                            <i class="fas fa-reset"></i> Reset Learning Data
+                        </button>
+                    </div>
+
+                    <div class="setting-info">
+                        <p><strong>Adaptive Learning:</strong> The system compares manual conversion with AI results. When manual conversion is good enough (>80% similarity), it saves the pattern for future use. Over time, you'll need less AI assistance!</p>
+                        <p><strong>Note:</strong> Make sure Ollama is running locally and the selected model is installed. Run <code>ollama pull [model-name]</code> to install models.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2024 Code Convert. Built for developers, by developers.</p>
+        </footer>
+    </div>
+
+    <!-- Monaco Editor Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
