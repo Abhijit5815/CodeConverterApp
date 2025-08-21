@@ -12,18 +12,13 @@
     <link rel="stylesheet" data-name="vs/editor/editor.main" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/editor/editor.main.css">
 </head>
 <body>
-    <div class="app-container">
-        <header class="header">
-            <div class="header-content">
-                <h1><i class="fas fa-code"></i> Code Convert</h1>
-                <p>Convert code between languages side by side</p>
-            </div>
-        </header>
-
-        <main class="main-content">
-            <div class="panels-container">
+    <main class="main-content">
+        <h1 style="text-align: center; color: #1f2937; margin-bottom: 2rem; font-size: 2rem; font-weight: 700;">
+            <i class="fas fa-code"></i> Code Convert Side by Side
+        </h1>
+        <div class="panels-container">
                 <!-- Source Panel -->
-                <div class="panel source-panel">
+                <div class="panel">
                     <div class="panel-header">
                         <div class="language-selector">
                             <label for="source-language">Source Language:</label>
@@ -48,7 +43,7 @@
                 </div>
 
                 <!-- Target Panel 1 -->
-                <div class="panel target-panel">
+                <div class="panel">
                     <div class="panel-header">
                         <div class="language-selector">
                             <label for="target1-language">Target Language:</label>
@@ -73,7 +68,7 @@
                 </div>
 
                 <!-- Target Panel 2 -->
-                <div class="panel target-panel">
+                <div class="panel">
                     <div class="panel-header">
                         <div class="language-selector">
                             <label for="target2-language">Target Language:</label>
@@ -102,6 +97,22 @@
                 <button id="convert-btn" class="convert-button" onclick="convertCode()">
                     <i class="fas fa-magic"></i> Convert Code
                 </button>
+                <div class="editor-debug-section">
+                    <div class="section-header">
+                        <i class="fas fa-tools"></i> Editor Debug Tools
+                    </div>
+                    <div style="text-align: center;">
+                        <button class="test-button" onclick="testEditorUpdate()" title="Test if all editors are working properly">
+                            <i class="fas fa-vial"></i> Test Editors
+                        </button>
+                        <button class="check-button" onclick="checkEditorContent()" title="Check what content is currently in the editors">
+                            <i class="fas fa-search"></i> Check Content
+                        </button>
+                        <button class="health-button" onclick="manualHealthCheck()" title="Perform a health check on all editors">
+                            <i class="fas fa-heartbeat"></i> Health Check
+                        </button>
+                    </div>
+                </div>
                 <div class="status-indicator">
                     <span id="status-text">Ready to convert</span>
                 </div>
@@ -175,9 +186,19 @@
                     </div>
 
                     <div class="setting-group">
-                        <label for="confidence-threshold">Confidence Threshold:</label>
+                        <label for="confidence-threshold">
+                            Confidence Threshold: 
+                            <i class="fas fa-info-circle" title="This controls when the system trusts manual conversion rules vs. when it uses AI verification. Lower = more AI checks (accurate but slower), Higher = more manual rules (faster but potentially less accurate)"></i>
+                        </label>
                         <input type="range" id="confidence-threshold" min="0.5" max="0.95" step="0.05" value="0.8" onchange="updateConfidenceThreshold()">
                         <span id="confidence-value">80%</span>
+                        <div class="setting-help">
+                            <small>
+                                <strong>50%:</strong> AI verification used often (maximum accuracy)<br>
+                                <strong>80%:</strong> Balanced approach (recommended)<br>
+                                <strong>95%:</strong> Manual rules trusted more (maximum speed)
+                            </small>
+                        </div>
                     </div>
 
                     <div class="learning-stats-panel">
@@ -188,9 +209,20 @@
                             AI Corrections: 0<br>
                             Learned Patterns: 0
                         </div>
-                        <button id="reset-learning-btn" onclick="resetLearningData()">
-                            <i class="fas fa-reset"></i> Reset Learning Data
-                        </button>
+                        <div class="learning-controls">
+                            <button class="explain-button" onclick="explainLearningProgress()">
+                                <i class="fas fa-question-circle"></i> Explain
+                            </button>
+                            <button class="reset-button" onclick="resetLearningData()">
+                                <i class="fas fa-undo"></i> Reset Learning Data
+                            </button>
+                        </div>
+                        <div class="setting-help">
+                            <small>
+                                <strong>Why Reset?</strong> Use when switching to different code types, debugging issues, or starting fresh.<br>
+                                <strong>Learning Process:</strong> System builds confidence in manual rules by comparing them with AI results.
+                            </small>
+                        </div>
                     </div>
 
                     <div class="setting-info">
@@ -200,14 +232,16 @@
                 </div>
             </div>
         </main>
-
-        <footer class="footer">
-            <p>&copy; 2024 Code Convert. Built for developers, by developers.</p>
-        </footer>
+        
+        <!-- Developer Credit -->
+        <div class="developer-credit">
+            <p>Developed with ❤️ by <strong>Abhijit Kasana</strong></p>
+            <p class="version-info">v1.0.0</p>
+        </div>
     </div>
 
-    <!-- Monaco Editor Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
-    <script src="script.js"></script>
-</body>
+        <!-- Monaco Editor Scripts -->
+        <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
+        <script src="script.js"></script>
+    </body>
 </html>
